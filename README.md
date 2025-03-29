@@ -26,3 +26,5 @@ To run this project locally:
 pip install streamlit pandas plotly
 3. Run the app:
 
+View Simulator Below:
+https://software-development-tools-project-ek0g.onrender.com/
