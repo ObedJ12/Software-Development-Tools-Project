@@ -1,0 +1,27 @@
+import pandas as pd
+import plotly.express as px
+
+# Load the dataset
+df = pd.read_csv('../vehicles_us.csv')
+df.head()
+
+df.info()
+df.describe(include='all')
+
+
+# Histogram of vehicle prices
+px.histogram(df, x='price', nbins=50, title='Distribution of Vehicle Prices')
+# Scatter plot: Price vs. Odometer
+px.scatter(df, x='odometer', y='price', title='Price vs. Odometer Reading')
+
+# Histogram: Distribution of model years
+px.histogram(df, x='model_year', nbins=30, title='Distribution of Vehicle Model Years')
+
+# Histogram: Distribution of odometer readings
+px.histogram(df, x='odometer', nbins=50, title='Distribution of Odometer Readings')
+
+# Scatterplot: Price vs. Model Year
+px.scatter(df, x='model_year', y='price', title='Price vs. Model Year')
+
+# Scatterplot: Price vs. Days Listed
+px.scatter(df, x='days_listed', y='price', title='Price vs. Days Listed')
