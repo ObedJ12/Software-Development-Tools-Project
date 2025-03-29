@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as px
 
 # Load dataset
-df = pd.read_csv("your_dataset.csv")  # Replace with your actual CSV file name
+df = pd.read_csv('../vehicles_us.csv')
 
 # Header
 st.header("Random Event Simulator Dashboard")
