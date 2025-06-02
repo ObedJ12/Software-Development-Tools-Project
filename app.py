@@ -11,20 +11,35 @@ df = pd.read_csv("vehicles_us.csv")
 # Header
 st.header("Random Event Simulator Dashboard")
 
-# Histogram
-st.subheader("Distribution of a Column")
-selected_column = st.selectbox("Choose a column for histogram", df.columns)
-hist = px.histogram(df, x=selected_column)
-st.plotly_chart(hist)
+# Fill missing model_year
+df['model_year'] = df.groupby('model')['model_year'].transform(lambda x: x.fillna(x.median()))
 
-# Scatter Plot
-st.subheader("Scatter Plot Viewer")
-x_axis = st.selectbox("X-axis", df.columns, index=0)
-y_axis = st.selectbox("Y-axis", df.columns, index=1)
-scatter = px.scatter(df, x=x_axis, y=y_axis)
-st.plotly_chart(scatter)
+# Fill missing cylinders
+df['cylinders'] = df.groupby('model')['cylinders'].transform(lambda x: x.fillna(x.median()))
 
-# Checkbox: Show raw data
-if st.checkbox("Show raw data"):
-    st.subheader("Raw Data")
-    st.write(df)
+# Fill missing odometer
+df['model_year_str'] = df['model_year'].astype(str)
+df['model_yr_key'] = df['model'] + '_' + df['model_year_str']
+df['odometer'] = df.groupby('model_yr_key')['odometer'].transform(lambda x: x.fillna(x.median()))
+df.drop(columns=['model_year_str', 'model_yr_key'], inplace=True)
+
+# Remove outliers
+df = df[df['price'].between(df['price'].quantile(0.01), df['price'].quantile(0.99))]
+df = df[df['model_year'].between(df['model_year'].quantile(0.01), df['model_year'].quantile(0.99))]
+
+# Create scatter plot
+fig = px.scatter(df, x='model_year', y='price', color='type', title='Price vs Model Year')
+plot_html = fig.to_html(full_html=False)
+ return render_template_string("""
+    <html>
+        <head><title>Vehicle Dashboard</title></head>
+        <body>
+            <h1>📊 Price vs Model Year</h1>
+            {{ plot_div|safe }}
+        </body>
+    </html>
+    """, plot_div=plot_html)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
